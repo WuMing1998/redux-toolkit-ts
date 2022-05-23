@@ -1,6 +1,6 @@
 hello,这里是学习 redux-toolkit 的笔记和实验项目。
 
-## 安装/install
+## install
 
 ```cmd
     npx create-react-app my-app --template redux-typescript
