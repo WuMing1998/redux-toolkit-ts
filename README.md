@@ -83,7 +83,7 @@ const store = configureStore({
 
 [createReducer](https://redux-toolkit.js.org/api/createReducer)
 
-reduxx-toolkit 简化了 redux 中的 switch case。
+redux-toolkit 简化了 redux 中的 switch case。
 
 简单案例：
 
