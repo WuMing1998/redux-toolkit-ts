@@ -76,3 +76,64 @@ const store = configureStore({
 // 自动检测开发环境与生产环境开启devTools
 // 包含redux扩展器 使用redux-batch扩展redux
 ```
+
+### createReducer()和 createAction()
+
+[createAction](https://redux-toolkit.js.org/api/createAction)
+
+[createReducer](https://redux-toolkit.js.org/api/createReducer)
+
+reduxx-toolkit 简化了 redux 中的 switch case。
+
+简单案例：
+
+```ts
+import { createAction, createReducer } from "@reduxjs/toolkit";
+
+interface CounterState {
+  value: number;
+}
+
+const increment = createAction("counter/increment");
+const decrement = createAction("counter/decrement");
+const incrementByAmount = createAction<number>("counter/incrementByAmount");
+
+const initialState = (): CounterState => {
+  return { value: 0 };
+};
+
+// initialState :state | ()=>state
+// builderCallback (builder)=>void
+const counterReducer = createReducer(initialState, (builder) => {
+  builder
+    .addCase(increment, (state, action) => {
+      state.value++;
+    })
+    .addCase(decrement, (state, action) => {
+      state.value--;
+    })
+    .addCase(incrementByAmount, (state, action) => {
+      state.value += action.payload;
+    });
+});
+```
+
+### builder.addCase(actionCreator,reducer(state,action))
+
+添加一个 case reducer 处理 action。addCase()必须在 addMatcher 和 addDefaultCase 之前调用
+
+actionCreator：传入 createAction 定义的 action。reducer：实际的 reducer 函数。
+
+### builder.addMatcher
+
+action 过滤器:
+
+```ts
+if (isFish(pet)) {
+  pet.swim();
+} else {
+  pet.fly();
+}
+```
+
+builder.addDefaultCase
