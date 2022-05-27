@@ -98,7 +98,7 @@ const increment = createAction("counter/increment");
 const decrement = createAction("counter/decrement");
 const incrementByAmount = createAction<number>("counter/incrementByAmount");
 
-const initialState = (): CounterState => {
+const initialState = () => CounterState{
   return { value: 0 };
 };
 
@@ -136,4 +136,73 @@ if (isFish(pet)) {
 }
 ```
 
-builder.addDefaultCase
+### builder.addDefaultCase
+
+添加默认的 reducer，如果所有的 action.type 都没有匹配上，执行该 addDefaultCase
+
+```ts
+import { createReducer } from "@reduxjs/toolkit";
+const initialState = { otherActions: 0 };
+const reducer = createReducer(initialState, (builder) => {
+  builder
+    // .addCase(...)
+    // .addMatcher(...)
+    .addDefaultCase((state, action) => {
+      state.otherActions++;
+    });
+});
+```
+
+### createSlice()
+
+它是一个函数，接收初始 state 和 reducer 函数对象。可以自动生成 reducer 和状态相对应的动作。
+
+它是编写 redux 逻辑的标准方法。
+
+它的内部调用 createAction 和 createReducer 方法。
+
+示例：
+
+```ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface CounterState {
+  value: number;
+}
+
+const initialState = { value: 0 } as CounterState;
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState,
+  reducers: {
+    increment(state) {
+      state.value++;
+    },
+    decrement(state) {
+      state.value--;
+    },
+    incrementByAmount(state, action: PayloadAction<number>) {
+      state.value += action.payload;
+    },
+  },
+});
+
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+```ts
+function createSlice({
+    // action的名称
+    name: string,
+    // 初始值
+    initialState: any,
+    //action动作
+    reducers: Object<string, ReducerFunction | ReducerAndPrepareObject>
+    // 扩展器，(builder)=>builder.addCase().addMatcher().addDefaultCase()
+    extraReducers?:
+    | Object<string, ReducerFunction>
+    | ((builder: ActionReducerMapBuilder<State>) => void)
+})
+```
