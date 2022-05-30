@@ -1,6 +1,6 @@
 hello,这里是学习 redux-toolkit 的笔记和实验项目。
 
-## install
+# install
 
 ```cmd
     npx create-react-app my-app --template redux-typescript
@@ -10,9 +10,9 @@ hello,这里是学习 redux-toolkit 的笔记和实验项目。
     yarn add @reduxjs/toolkit
 ```
 
-## Api:
+# Api:
 
-### configureStore()
+## configureStore()
 
 利用简化的配置选项和默认设置来设置你的 createStore,可以扩展各种中间件。默认内置 redux-thunk，默认开启 Redux DevTools Extension。
 
@@ -77,7 +77,7 @@ const store = configureStore({
 // 包含redux扩展器 使用redux-batch扩展redux
 ```
 
-### createReducer()和 createAction()
+## createReducer()和 createAction()
 
 [createAction](https://redux-toolkit.js.org/api/createAction)
 
@@ -153,7 +153,7 @@ const reducer = createReducer(initialState, (builder) => {
 });
 ```
 
-### createSlice()
+## createSlice()
 
 它是一个函数，接收初始 state 和 reducer 函数对象。可以自动生成 reducer 和状态相对应的动作。
 
@@ -205,4 +205,132 @@ function createSlice({
     | Object<string, ReducerFunction>
     | ((builder: ActionReducerMapBuilder<State>) => void)
 })
+```
+
+## createAsyncThunk()
+
+redux-toolkit 的异步处理方法。
+
+https://redux-toolkit.js.org/api/createAsyncThunk
+
+简单示例：
+
+```ts
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { userAPI } from "./userAPI";
+
+// 创建thunk
+const fetchUserById = createAsyncThunk(
+  "users/fetchByIdStatus",
+  async (userId: number, thunkAPI) => {
+    if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
+        // 如果数据已经获取，可以使用这里中断thunk
+        return false
+    }
+    try {
+      const response = await userAPI.fetchById(userId);
+      return response.data;
+    } catch (err) {
+      //`err.response.data` `action.payload` `rejected`
+      //使用rejectWithValue捕获错误信息
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+interface UsersState {
+  entities: [];
+  loading: "idle" | "pending" | "succeeded" | "failed";
+}
+
+const initialState = {
+  entities: [],
+  loading: "idle",
+} as UsersState;
+
+// 处理thunk中的异步函数
+// 每个生成的thunk有自动生成的动作。 pending、fulfilled、rejected 请求中、请求完成、拒绝请求
+const usersSlice = createSlice({
+  name: "users",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    // 这里根据你的需求添加不同状态下的处理方法
+    builder.addCase(fetchUserById.fulfilled, (state, action) => {
+      state.entities.push(action.payload);
+    });
+  },
+});
+
+dispatch(fetchUserById(123));
+```
+
+createAsyncThunk(type,payloadCreator(arg,thunkAPI))=> redux thunk action creator
+
+### type
+
+'users/requestStatus' 会自动生成 type 状态 => pending、fulfilled、rejected 请求中、请求完成、拒绝请求
+
+'users/requestStatus/pending'
+
+'users/requestStatus/fulfilled'
+
+'users/requestStatus/rejected'
+
+### payloadCreator(arg,thunkAPI)
+
+arg: number | object | string
+
+thunkAPI: 它包括传递给 redux thunk 函数的所有参数和其他的方法 =>
+
+dispatch
+
+getState
+
+extra（扩展）
+
+requestId（自动生成唯一 id）
+
+rejectWithValue(value, [meta])（reject 时传递 value 到 rejected 状态）
+
+fulfillWithValue(value, meta)（fulfill 时获取）
+
+### 处理 thunk
+
+createAsyncThunk()始终会返回一个 fulfilled 状态的回调。
+
+在 thunk 返回的 Proimise 中包含 unwrap 和 unwrapResult。可以使用它们来判断请求是否失败
+
+简单示例：
+
+unwrap()
+
+```ts
+const onClick = async () => {
+  try {
+    const originalPromiseResult = await dispatch(
+      fetchUserById(userId)
+    ).unwrap();
+    // handle result here
+  } catch (rejectedValueOrSerializedError) {
+    // handle error here
+  }
+};
+```
+
+unwrapResult
+
+```ts
+import { unwrapResult } from "@reduxjs/toolkit";
+
+// in the component
+const onClick = async () => {
+  try {
+    const resultAction = await dispatch(fetchUserById(userId));
+    const originalPromiseResult = unwrapResult(resultAction);
+    // handle result here
+  } catch (rejectedValueOrSerializedError) {
+    // handle error here
+  }
+};
 ```
