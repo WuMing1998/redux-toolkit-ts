@@ -16,6 +16,8 @@ hello,这里是学习 redux-toolkit 的笔记和实验项目。
 
 利用简化的配置选项和默认设置来设置你的 createStore,可以扩展各种中间件。默认内置 redux-thunk，默认开启 Redux DevTools Extension。
 
+https://redux-toolkit.js.org/api/configureStore
+
 ```ts
 // file: /store/todos/todosReducer.ts noEmit
 import { Reducer } from "@reduxjs/toolkit";
@@ -161,6 +163,8 @@ const reducer = createReducer(initialState, (builder) => {
 
 它的内部调用 createAction 和 createReducer 方法。
 
+https://redux-toolkit.js.org/api/createSlice
+
 示例：
 
 ```ts
@@ -223,9 +227,9 @@ import { userAPI } from "./userAPI";
 const fetchUserById = createAsyncThunk(
   "users/fetchByIdStatus",
   async (userId: number, thunkAPI) => {
-    if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
-        // 如果数据已经获取，可以使用这里中断thunk
-        return false
+    if (fetchStatus === "fulfilled" || fetchStatus === "loading") {
+      // 如果数据已经获取，可以使用这里中断thunk
+      return false;
     }
     try {
       const response = await userAPI.fetchById(userId);
@@ -318,7 +322,7 @@ const onClick = async () => {
 };
 ```
 
-unwrapResult
+unwrapResult()
 
 ```ts
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -334,3 +338,76 @@ const onClick = async () => {
   }
 };
 ```
+
+## createEntityAdapter()
+
+用于预生成 reducer 和选择器，对特定结构的对象实例执行 CRUD 操作。
+
+https://redux-toolkit.js.org/api/createEntityAdapter
+
+简单示例：
+
+```ts
+import {
+  createEntityAdapter,
+  createSlice,
+  configureStore,
+} from "@reduxjs/toolkit";
+
+type Book = { bookId: string; title: string };
+
+const booksAdapter = createEntityAdapter<Book>({
+  // 假设book的主键是bookId
+  selectId: (book) => book.bookId,
+  // 数据根据标题进行排序
+  sortComparer: (a, b) => a.title.localeCompare(b.title),
+});
+
+const booksSlice = createSlice({
+  name: "books",
+  initialState: booksAdapter.getInitialState(),
+  reducers: {
+    // 可以将适配器函数直接传递。这里它被视为一个值
+    // createSlice会自动生成bookAdded action、type、creator
+    bookAdded: booksAdapter.addOne,
+    booksReceived(state, action) {
+      // 也可以扩展其他的方法
+      booksAdapter.setAll(state, action.payload.books);
+    },
+  },
+});
+
+const store = configureStore({
+  reducer: {
+    books: booksSlice.reducer,
+  },
+});
+
+type RootState = ReturnType<typeof store.getState>;
+
+console.log(store.getState().books);
+// { ids: [], entities: {} }
+
+// 创建State的选择器
+const booksSelectors = booksAdapter.getSelectors<RootState>(
+  (state) => state.books
+);
+
+// 使用booksSelectors来检索数据
+const allBooks = booksSelectors.selectAll(store.getState());
+```
+
+### createEntityAdapter(selectId(entity => entity.id),sortComparer(entityNext,entityPre))
+
+selectId:
+
+唯一索引，不传默认为：entity => entity.id。如果使用其他索引名作为唯一索引，请在 selectId 中返回它。
+
+例：(book) => book.bookId
+
+sortComparer：
+
+传递两个 entity 示例。返回结果应该是标准的 Array.sort()返回值（1,0,-1）将根据返回值进行自动排序.
+
+如果未提供 sortComparer 方法。默认不排序,且 addOne(), updateMany()方法不会启动
+
