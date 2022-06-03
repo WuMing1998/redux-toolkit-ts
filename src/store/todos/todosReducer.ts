@@ -1,3 +1,40 @@
-import { Reducer } from "@reduxjs/toolkit";
-declare const reducer: Reducer<{}>;
-export default reducer;
+import {
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
+
+interface ITodo {
+  id: string;
+  toggle: boolean;
+  context: string;
+  date: string;
+}
+
+const initialState: ITodo[] = [];
+
+// const todosAdapter = createEntityAdapter<ITodo>({
+//   //   selectId: (todo) => book.bookId,
+//   // 数据根据内容进行排序
+//   sortComparer: (a, b) => a.context.localeCompare(b.context),
+// });
+
+const todosSlice = createSlice({
+  name: "todo",
+  initialState: initialState,
+  reducers: {
+    addTodo: (state: ITodo[], action: PayloadAction<ITodo>) => [
+      ...state,
+      action.payload,
+    ],
+    removeTodo: (state: ITodo[], action: PayloadAction<ITodo>) =>
+      state.filter((todo) => action.payload.id !== todo.id),
+    updateTodo(state: ITodo[], action: PayloadAction<ITodo>) {
+      state.map((todo) =>
+        todo.id === action.payload.id ? action.payload : todo
+      );
+    },
+  },
+});
+
+export const { addTodo, removeTodo, updateTodo } = todosSlice.actions;
+export default todosSlice.reducer;
