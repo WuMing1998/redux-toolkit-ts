@@ -6,8 +6,7 @@ import logger from "redux-logger";
 //添加redux扩展功能 redux-batch 批处理
 import { reduxBatch } from "@manaflair/redux-batch";
 import todosReducer from "./todos/todosReducer";
-
-export default configureStore({
+const store = configureStore({
   //reducer
   reducer: {
     todos: todosReducer,
@@ -19,3 +18,7 @@ export default configureStore({
   //redux扩展功能
   enhancers: [reduxBatch],
 });
+
+export default store;
+export type TState = ReturnType<typeof store.getState>;
+// export type TDispatch = typeof store.dispatch;
