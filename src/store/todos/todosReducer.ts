@@ -2,6 +2,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { TodoState } from "..";
 
 interface ITodo {
   id: string;
@@ -10,7 +11,14 @@ interface ITodo {
   date: string;
 }
 
-const initialState: ITodo[] = [];
+const initialState: ITodo[] = [
+  {
+    id:'001',
+    toggle:false,
+    context:'没做完呢',
+    date:'2022-06-07'
+  }
+];
 
 // const todosAdapter = createEntityAdapter<ITodo>({
 //   //   selectId: (todo) => book.bookId,
@@ -37,4 +45,6 @@ const todosSlice = createSlice({
 });
 
 export const { addTodo, removeTodo, updateTodo } = todosSlice.actions;
+
+export const todoState = (state:TodoState) => state;
 export default todosSlice.reducer;
