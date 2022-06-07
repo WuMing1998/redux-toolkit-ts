@@ -1,9 +1,12 @@
 import { FC } from "react";
-import { addTodo } from "./store/todos/todosReducer";
+import { Counter } from "./features/counter/Counter";
+import Todo from "./views/Todo";
 
 const App: FC = () => {
   return (
     <div className="App">
+      {/* <Counter></Counter> */}
+      <Todo></Todo>
     </div>
   );
 }
