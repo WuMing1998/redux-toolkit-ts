@@ -1,8 +1,9 @@
 import { FC } from 'react'
+import { tw } from 'twind'
 
 const TInput: FC = () => {
     return (
-        <div>TInput</div>
+        <input type="text" />
     )
 }
 
