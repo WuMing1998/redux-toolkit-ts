@@ -18,9 +18,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    // tw提示插件
+    "plugins": [{
+      "name": "@twind/typesscript-plugin",
+      "tags": ["tw", "cx"],
+      "attributes": ["tw"],
+      "styles": ["styled", "stitched"]
+    }]
   },
   "include": [
     "src"
-  ]
+  ],
 }
