@@ -1,5 +1,4 @@
 import { FC } from 'react'
-import { tw } from 'twind'
 
 const TInput: FC = () => {
     return (
