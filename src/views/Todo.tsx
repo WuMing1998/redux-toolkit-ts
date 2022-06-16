@@ -14,6 +14,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit/dist/createAction";
 import TItem from "../components/TItem";
+import TInput from "../components/TInput";
 
 interface ITodoContextDefalutValue {
   todos: ITodo[];
@@ -49,6 +50,9 @@ const Todo: FC = () => {
         updateTodo,
       }}
     >
+      <div>
+        <TInput></TInput>
+      </div>
       <div className={tw`font-bold`}>
         {todos.map((item, index) => {
           return <TItem key={item.id} {...item}></TItem>;
