@@ -1,9 +1,13 @@
-import { FC } from 'react'
+import { FC, useRef } from "react";
 
 const TInput: FC = () => {
-    return (
-        <input type="text" />
-    )
-}
+  const inpRef = useRef({} as HTMLInputElement);
 
-export default TInput
+  const inputHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.key === "Enter" ? console.log(inpRef.current.value) : undefined;
+  };
+
+  return <input ref={inpRef} type="text" onKeyUp={inputHandler} />;
+};
+
+export default TInput;
