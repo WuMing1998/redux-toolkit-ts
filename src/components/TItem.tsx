@@ -1,24 +1,64 @@
-import { FC, useContext, useDeferredValue, useState } from "react";
+import dayjs from "dayjs";
+import {
+  Dispatch,
+  FC,
+  useContext,
+  useDeferredValue,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch } from "react-redux";
 import { ITodo } from "../store/todos/todosReducer";
 import { ToDoContext } from "../views/Todo";
 
-const UpdateContext: FC<{
+interface IUpdateContextProps extends ITodo {
   update: boolean;
-  context: ITodo["context"];
-  toggleUpdate: () => void;
-}> = ({ update, context, toggleUpdate }) => {
+  setUpdate: Dispatch<React.SetStateAction<boolean>>;
+}
+
+const UpdateContext: FC<IUpdateContextProps> = (props) => {
+  const { id, toggle, context, date, update, setUpdate } = props;
+  const inpRef = useRef({} as HTMLInputElement);
+  const dispatch = useDispatch();
+  const { todos, updateTodo } = useContext(ToDoContext);
+
+  const inputHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (inpRef.current.value) {
+        todos.find((item) => {
+          if (item.id === id) {
+            setUpdate(false);
+            dispatch(
+              updateTodo({
+                id,
+                toggle,
+                context: inpRef.current.value,
+                date,
+              })
+            );
+          }
+        });
+      } else {
+        alert("待办事项不可为空");
+      }
+    }
+  };
+
   return update ? (
-    <input type="text" value={context} onChange={() => {}} />
+    <input
+      ref={inpRef}
+      type="text"
+      defaultValue={context}
+      onKeyUp={inputHandler}
+    />
   ) : (
-    <div onClick={toggleUpdate}>{context}</div>
+    <div onClick={() => setUpdate(true)}>{context}</div>
   );
 };
 
 const TItem: FC<ITodo> = (todo) => {
   const { id, toggle, context, date } = todo;
   const { todos, updateTodo, removeTodo } = useContext(ToDoContext);
-  console.log(todos);
 
   const [update, setUpdate] = useState<boolean>(false);
 
@@ -41,9 +81,9 @@ const TItem: FC<ITodo> = (todo) => {
         defaultChecked={toggle}
       />
       <UpdateContext
-        context={context}
+        {...todo}
         update={updateDef}
-        toggleUpdate={() => setUpdate(true)}
+        setUpdate={setUpdate}
       ></UpdateContext>
       <button onClick={() => {}}>删除</button>
     </div>
