@@ -27,11 +27,11 @@ const todosSlice = createSlice({
     ],
     removeTodo: (state: ITodo[], action: PayloadAction<ITodo>) =>
       state.filter((todo) => action.payload.id !== todo.id),
-    updateTodo(state: ITodo[], action: PayloadAction<ITodo>) {
-      state.map((todo) => {
+    updateTodo: (state: ITodo[], action: PayloadAction<ITodo>) => [
+      ...state.map((todo) => {
         return todo.id === action.payload.id ? action.payload : todo;
-      });
-    },
+      }),
+    ],
   },
 });
 
