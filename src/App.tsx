@@ -4,7 +4,7 @@ import Todo from "./views/Todo";
 
 const App: FC = () => {
   return (
-    <div className="App">
+    <div className="">
       {/* <Counter></Counter> */}
       <Todo></Todo>
     </div>

@@ -57,8 +57,8 @@ const UpdateContext: FC<IUpdateContextProps> = (props) => {
 };
 
 const TItem: FC<ITodo> = (todo) => {
-  const { id, toggle, context, date } = todo;
-  const { todos, updateTodo, removeTodo } = useContext(ToDoContext);
+  const { toggle, date } = todo;
+  const { updateTodo, removeTodo } = useContext(ToDoContext);
 
   const [update, setUpdate] = useState<boolean>(false);
 
