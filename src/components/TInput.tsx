@@ -20,6 +20,8 @@ const TInput: FC = () => {
               date: dayjs().format("YYYY-MM-DD"),
             })
           );
+        }else{
+        alert("待办事项不可重复");
         }
       } else {
         alert("待办事项不可为空");
@@ -27,7 +29,7 @@ const TInput: FC = () => {
     }
   };
 
-  return <input ref={inpRef} type="text" onKeyUp={inputHandler} />;
+  return <input ref={inpRef} type="text" placeholder="请输入待办事项" onKeyUp={inputHandler} />;
 };
 
 export default TInput;

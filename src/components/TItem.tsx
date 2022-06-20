@@ -80,12 +80,13 @@ const TItem: FC<ITodo> = (todo) => {
         }
         defaultChecked={toggle}
       />
+      <span>{date}</span>
       <UpdateContext
         {...todo}
         update={updateDef}
         setUpdate={setUpdate}
       ></UpdateContext>
-      <button onClick={() => {}}>删除</button>
+      <button onClick={() => dispatch(removeTodo(todo))}>删除</button>
     </div>
   );
 };
