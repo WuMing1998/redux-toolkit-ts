@@ -8,30 +8,33 @@ export interface ITodo {
   date: string;
 }
 
-const initialState: ITodo[] = [
-  {
-    id: "001",
-    toggle: true,
-    context: "没做完呢",
-    date: "2022-06-07",
-  },
-];
+const initialState = (): ITodo[] => {
+  return JSON.parse(localStorage.getItem("todoList") || JSON.stringify([]));
+};
 
 const todosSlice = createSlice({
   name: "todo",
   initialState: initialState,
   reducers: {
-    addTodo: (state: ITodo[], action: PayloadAction<ITodo>) => [
-      ...state,
-      action.payload,
-    ],
-    removeTodo: (state: ITodo[], action: PayloadAction<ITodo>) =>
-      state.filter((todo) => action.payload.id !== todo.id),
-    updateTodo: (state: ITodo[], action: PayloadAction<ITodo>) => [
-      ...state.map((todo) => {
-        return todo.id === action.payload.id ? action.payload : todo;
-      }),
-    ],
+    addTodo: (state: ITodo[], action: PayloadAction<ITodo>) => {
+      const todos = [...state, action.payload];
+      localStorage.setItem("todoList", JSON.stringify(todos));
+      return todos;
+    },
+    removeTodo: (state: ITodo[], action: PayloadAction<ITodo>) => {
+      const todos = state.filter((todo) => action.payload.id !== todo.id);
+      localStorage.setItem("todoList", JSON.stringify(todos));
+      return todos;
+    },
+    updateTodo: (state: ITodo[], action: PayloadAction<ITodo>) => {
+      const todos = [
+        ...state.map((todo) => {
+          return todo.id === action.payload.id ? action.payload : todo;
+        }),
+      ];
+      localStorage.setItem("todoList", JSON.stringify(todos));
+      return todos;
+    },
   },
 });
 
